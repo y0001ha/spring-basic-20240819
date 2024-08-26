@@ -54,8 +54,6 @@ public class ServiceController {
 
     private Date today;
 
-
-
     @GetMapping("")
     public ResponseEntity<String> getService() {
         return basicService.getService();
