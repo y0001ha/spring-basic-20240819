@@ -21,12 +21,12 @@ import lombok.Setter;
 // - 해당 클래스를 Entity 클래스로 지정하는 어노테이션
 // - JPA에서 데이터 관리를 위해 사용되는 주된 객체
 // - name 속성으로 Entity 자체의 이름을 지정할 수 있음
-@Entity(name="sample_table1")
+@Entity(name="sample_table_1")
 // @Table: 
 // - 해당 Entity 클래스를 RDBMS의 테이블과 매핑시키는 어노테이션
 // - 만약 java의 class명과 RDBMS의 table명이 동일하다면 유추하여 매핑
 // - 이름이 서로 다르다면 name 속성으로 매핑할 table명을 지정할 수 있음
-@Table(name="sample_table1")
+@Table(name="sample_table_1")
 // Sample_table1_entity
 public class SampleTable1Entity {
 
