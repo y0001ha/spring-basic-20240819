@@ -17,7 +17,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-// @Entity:n
+// @Entity:
 // - 해당 클래스를 Entity 클래스로 지정하는 어노테이션
 // - JPA에서 데이터 관리를 위해 사용되는 주된 객체
 // - name 속성으로 Entity 자체의 이름을 지정할 수 있음
