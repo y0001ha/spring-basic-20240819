@@ -3,6 +3,8 @@ package com.syh.springbasic.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.syh.springbasic.entity.SampleUserEntity;
@@ -27,4 +29,25 @@ extends JpaRepository<SampleUserEntity, String> {
 
     // - OrderBy: 정렬을 사용할 필드를 짖어하여 Desc, Asc 지정
     List<SampleUserEntity> findByNameOrderByTelNumberDesc(String name);
+
+    // - existsBy: 조건에 해당하는 레코드가 존재하는지 여부 확인 시 사용
+    boolean existsByName(String name);
+
+    // - countBy: 조건에 해당하는 레코드의 개수 확인 시 사용
+    int countByName(String name);
+
+    // @Query:
+    // - 쿼리 메서드의 한계를 극복하기 위해 사용하는 방식
+    // - 쿼리 메서드가 사용할 수 없는 복잡한 쿼리를 직접 작성하는 방법
+
+    // JPQL (Java Persistence Query Language)
+    // - 표준 SQL과 매우 흡사하지만 Entity 클래스와 Entity 필드로 쿼리를 작성하는 방법
+    @Query(value="SELECT u FROM user u WHERE u.name = ?1 AND u.address = ?2")
+    List<SampleUserEntity> getJpql(String name, String address);
+
+    @Query(value="SELECT u FROM user u WHERE u.name = :name AND u.address = :address")
+    List<SampleUserEntity> getJpql2(
+        @Param("name") String name,
+        @Param("address") String address
+    );
 }
