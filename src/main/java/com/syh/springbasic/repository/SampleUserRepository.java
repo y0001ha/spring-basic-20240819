@@ -52,7 +52,7 @@ public interface SampleUserRepository
             @Param("name") String name,
             @Param("address") String address);
     
-            // Native SQL:
+    // Native SQL:
     // - 현재 REBMS의 SQL 문법을 그대로 사용하는 방법
     // - @Query nativeQuery 속성을 반드시 true로 지정
     @Query(value=
