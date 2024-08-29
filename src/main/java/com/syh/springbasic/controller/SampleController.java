@@ -42,6 +42,14 @@ public class SampleController {
         public ResponseEntity<String> queryMethod() {
         ResponseEntity<String> response = sampleService.queryString();
         return response;
-
     }
+
+    @GetMapping("/jwt/{name}")
+    public String getJwt(
+        @PathVariable("name") String name
+    ) {
+        String response = sampleService.getJwt(name);
+        return response;
+    }
+
 }
