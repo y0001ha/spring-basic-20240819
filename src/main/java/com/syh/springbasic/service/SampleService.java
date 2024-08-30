@@ -10,4 +10,5 @@ public interface SampleService {
     ResponseEntity<String> deletedSample1 (String sampledId);
     ResponseEntity<String> queryString();
     String getJwt(String name);
+    String validateJwt(String jwt);
 }
