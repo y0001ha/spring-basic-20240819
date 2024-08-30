@@ -1,11 +1,22 @@
 package com.syh.springbasic.filter;
 
+
 import java.io.IOException;
+import java.util.ArrayList;
+
+import java.util.List;
 
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import com.syh.springbasic.entity.SampleUserEntity;
 import com.syh.springbasic.provider.JwtProvider;
+import com.syh.springbasic.repository.SampleUserRepository;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
+    private final SampleUserRepository sampleUserRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -30,7 +42,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
 
-            // 1. request 객체에서 token 가져오기
+        // 인증 작업
+        // 1. request 객체에서 token 가져오기
         String token = parseBearerToken(request);
         if (token == null) {
             filterChain.doFilter(request, response);
@@ -45,13 +58,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        } catch (Exception exception) {
+        // 3. 데이터베이스에 존재하는 유저인지 확인
+        SampleUserEntity userEntity =  sampleUserRepository.findByUserId(subject);
+        if (userEntity == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        // 인증이 완료
 
-            exception.printStackTrace();
+        // 4. 접근주체의 권한 리스트 지정
+        List<GrantedAuthority> roles = AuthorityUtils.NO_AUTHORITIES;
+        if (subject. equals("qwer1234")) {
+            roles = new ArrayList<>();
+            roles.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
         }
 
+        // 5. principle에 대한 정보를 controller로 전달하기 위해 context에 저장
+
+        // 5.1 인증된 사용자 객체를 생성
+        // UsernamePasswordAuthenticationToken(사용자이름, 비밀번호, 권한);
+        AbstractAuthenticationToken authenticationToken
+            = new UsernamePasswordAuthenticationToken(userEntity, null, roles); 
 
         
+
+    } catch (Exception exception) { 
+        exception.printStackTrace();
+    }
+
+
+
     }
     
 

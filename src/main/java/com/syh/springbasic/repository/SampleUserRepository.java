@@ -65,4 +65,9 @@ public interface SampleUserRepository
         @Param("name") String name,
         @Param("address") String address
     );
+
+
+    SampleUserEntity findByUserId(String userId);
+
+
 }
