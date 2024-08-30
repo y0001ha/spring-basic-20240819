@@ -13,6 +13,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 
 import com.syh.springbasic.entity.SampleUserEntity;
 import com.syh.springbasic.provider.JwtProvider;
@@ -40,51 +43,62 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        try {
+            try {
 
-        // 인증 작업
-        // 1. request 객체에서 token 가져오기
-        String token = parseBearerToken(request);
-        if (token == null) {
-            filterChain.doFilter(request, response);
-            return;
+            // 인증 작업
+            // 1. request 객체에서 token 가져오기
+            String token = parseBearerToken(request);
+            if (token == null) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            // 2. tokem 검증
+            String subject = jwtProvider.validate(token);
+            if (subject == null) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            // 3. 데이터베이스에 존재하는 유저인지 확인
+            SampleUserEntity userEntity =  sampleUserRepository.findByUserId(subject);
+            if (userEntity == null) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+            // 인증이 완료
+
+            // 4. 접근주체의 권한 리스트 지정
+            List<GrantedAuthority> roles = AuthorityUtils.NO_AUTHORITIES;
+            if (subject. equals("qwer1234")) {
+                roles = new ArrayList<>();
+                roles.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+            }
+
+            // 5. principle에 대한 정보를 controller로 전달하기 위해 context에 저장
+
+            // 5.1 인증된 사용자 객체를 생성
+            // UsernamePasswordAuthenticationToken(사용자이름, 비밀번호, 권한);
+            AbstractAuthenticationToken authenticationToken
+                = new UsernamePasswordAuthenticationToken(userEntity, null, roles); 
+
+            // 5.2 인증 정보의 상세 리퀘스트를 등록
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            // 5.3 빈 security context 생성
+            SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+
+            // 5.4 security context 생성한 인증 정보 토큰을 등록
+            securityContext.setAuthentication(authenticationToken);
+
+            // 5.5 생성한 security context를 등록
+            SecurityContextHolder.setContext(securityContext);
+
+        } catch (Exception exception) { 
+            exception.printStackTrace();
         }
-
-        
-        // 2. tokem 검증
-        String subject = jwtProvider.validate(token);
-        if (subject == null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        // 3. 데이터베이스에 존재하는 유저인지 확인
-        SampleUserEntity userEntity =  sampleUserRepository.findByUserId(subject);
-        if (userEntity == null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        // 인증이 완료
-
-        // 4. 접근주체의 권한 리스트 지정
-        List<GrantedAuthority> roles = AuthorityUtils.NO_AUTHORITIES;
-        if (subject. equals("qwer1234")) {
-            roles = new ArrayList<>();
-            roles.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        }
-
-        // 5. principle에 대한 정보를 controller로 전달하기 위해 context에 저장
-
-        // 5.1 인증된 사용자 객체를 생성
-        // UsernamePasswordAuthenticationToken(사용자이름, 비밀번호, 권한);
-        AbstractAuthenticationToken authenticationToken
-            = new UsernamePasswordAuthenticationToken(userEntity, null, roles); 
-
-        
-
-    } catch (Exception exception) { 
-        exception.printStackTrace();
-    }
+        // 6. 다음 필터에 request와 response를 전달
+        filterChain.doFilter(request, response);
 
 
 
