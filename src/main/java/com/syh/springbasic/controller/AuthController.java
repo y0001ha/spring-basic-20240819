@@ -2,8 +2,14 @@ package com.syh.springbasic.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.syh.springbasic.dto.PostUserRequestDto;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
@@ -19,7 +25,13 @@ public class AuthController {
         @AuthenticationPrincipal String principal 
     ) {
         return principal;
-    
-
     }
+
+    @PostMapping("/sign-up")
+    public String signUp(
+        @RequestBody @Valid PostUserRequestDto requestBody
+    ) {
+        return null;
+    }
+
 }

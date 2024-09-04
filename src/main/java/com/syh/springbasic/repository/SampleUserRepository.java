@@ -67,6 +67,10 @@ public interface SampleUserRepository
     );
 
 
+    boolean existsByUserId(String userId);
+    boolean existsByTelNumber(String telNumber);
+    
+
     SampleUserEntity findByUserId(String userId);
 
 
