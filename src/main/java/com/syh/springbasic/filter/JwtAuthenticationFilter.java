@@ -1,4 +1,4 @@
-package com.sjh.springbasic.filter;
+package com.syh.springbasic.filter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,9 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.sjh.springbasic.entity.SampleUserEntity;
-import com.sjh.springbasic.provider.JwtProvider;
-import com.sjh.springbasic.repository.SampleUserRepository;
+import com.syh.springbasic.entity.SampleUserEntity;
+import com.syh.springbasic.provider.JwtProvider;
+import com.syh.springbasic.repository.SampleUserRepository;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
