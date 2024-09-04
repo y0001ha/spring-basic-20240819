@@ -45,7 +45,7 @@ public class AuthController {
     public String signIn(
         @RequestBody @Valid SignInRequestDto requestBody
     ) {
-        String response = authService.signUp(requestBody);
+        String response = authService.signIn(requestBody);
         return response;
     }
     
